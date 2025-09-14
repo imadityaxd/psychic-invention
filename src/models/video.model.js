@@ -1,46 +1,51 @@
-import mongoose, {Schema} from "mongoose"
-import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2";
+// Import dependencies
+import mongoose, { Schema } from "mongoose"; // Mongoose & Schema for defining model
+import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2"; // Plugin for pagination on aggregate queries
 
-const videoSchema = new Schema (
+// Define schema for Video collection
+const videoSchema = new Schema(
     {
-        videoFile:{
-            type:String, //cloudinary url
+        videoFile: {
+            type: String,   // Cloudinary URL (video stored in cloud)
+            required: true  // must be provided
+        },
+        thumbnail: {
+            type: String,   // Thumbnail image URL
             required: true
         },
-        thumbnail:{
-            type:String,
-            required:true
-        },
-        title:{
-            type:String,
-            required:true
-        },
-        description:{
-            type:String,
-            required:true,
-        },
-        duration:{
-            type:Number, //cloudinary url
+        title: {
+            type: String,   // Title of the video
             required: true
         },
-        views:{
-            type:Number,
-            default:0
+        description: {
+            type: String,   // Description of the video
+            required: true
         },
-        isPublished:{
-            type:Boolean,
-            default:true
+        duration: {
+            type: Number,   // Length of video in seconds (fetched from Cloudinary or metadata)
+            required: true
         },
-        owner:{
-            type:Schema.Types.ObjectId,
-            ref:"User"
+        views: {
+            type: Number,   // Number of times video has been viewed
+            default: 0      // starts from 0
+        },
+        isPublished: {
+            type: Boolean,  // Whether video is visible to public
+            default: true   // by default, published
+        },
+        owner: {
+            type: Schema.Types.ObjectId, // Reference to User collection
+            ref: "User"                  // creates relationship between Video → User
         }
     },
     {
-        timestamps:true
+        timestamps: true // Automatically adds createdAt & updatedAt fields
     }
-)
+);
 
-videoSchema.plugin(mongooseAggregatePaginate)
+// Add aggregate pagination plugin to schema
+// → lets you use pagination with aggregate pipelines (e.g. filtering, lookup, sorting)
+videoSchema.plugin(mongooseAggregatePaginate);
 
-export const Video = mongoose.model("Video", videoSchema)
+// Export Video model to use in app
+export const Video = mongoose.model("Video", videoSchema);
